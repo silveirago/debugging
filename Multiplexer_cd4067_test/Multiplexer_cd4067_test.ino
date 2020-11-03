@@ -1,11 +1,12 @@
 #include "Multiplexer4067.h"
 
 //* Define s0, s1, s2, s3, and x pins
-#define s0 2
-#define s1 3
-#define s2 4
-#define s3 5
-#define x1 A1 // analog pin of the first mux
+#define s0 16
+#define s1 14
+#define s2 15
+#define s3 2
+#define x1 A10 // analog pin of the first mux
+
 
 Multiplexer4067 mplex = Multiplexer4067(s0, s1, s2, s3, x1);
 
@@ -36,7 +37,7 @@ void readMux() {
     Serial.print(i);
     Serial.print(": ");
     //Serial.print(map(mplex.readChannel(i), 0, 1022, 0, 127));
-    Serial.print(mplex.readChannel(muxPin[i]));
+    Serial.print(mplex.readChannel(i));
     Serial.print("   ");
   }
 

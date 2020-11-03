@@ -26,15 +26,25 @@ const int analogInPin[potN] = {A0, A1, A2, A3, A6, A7, A8, A9}; // Analog input 
 
 int sensorValue[potN] = {0};        // value read from the pot
 int sensorPValue[potN] = {0};        // previous val
+int sensorFilteredValue[potN] = {0};        // value read from the pot
 int potVar[potN] = {0};        // previous val
+
+// one pole filter
+// y[n] = A0 * x[n] + B1 * y[n-1];
+// A = 0.15 and B = 0.85
+// the smaller is A and the bigger is B, the bigger is the filtering
+// also the bigger is the filtering the slower is the reponse
+// A + B = 1 (should be)
+float filterA = 0.3; 
+float filterB = 0.7;
 
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(115200);
 
-  //  for (int i = 0; i < potN; i++) {
-  //    pinMode(analogInPin[i], INPUT_PULLUP);
-  //  }
+    for (int i = 0; i < potN; i++) {
+      pinMode(analogInPin[i], INPUT_PULLUP);
+    }
 
 }
 
@@ -47,20 +57,25 @@ void loop() {
     // one pole filter
     // y[n] = A0 * x[n] + B1 * y[n-1];
     // A = 0.15 and B = 0.85
-    int reading = analogRead(analogInPin[i]);
-    float filteredVal = 0.5 * reading + 0.5 * sensorPValue[i];
-    sensorValue[i] = filteredVal;
+    sensorValue[i] = analogRead(analogInPin[i]); // raw value
+    float filteredVal = filterA * sensorValue[i] + filterB * sensorPValue[i]; // filtered value
+    sensorFilteredValue[i] = filteredVal;
 
-    potVar[i] = abs(sensorValue[i] - sensorPValue[i]);
+    potVar[i] = abs(sensorValue[i] - sensorPValue[i]); // pote variation
+
     sensorPValue[i] = sensorValue[i];
   }
 
 
   // print the results to the Serial Monitor:
   for (int i = 0; i < potN; i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    //Serial.print(sensorValue[i]);
+    //    Serial.print(i);
+    //    Serial.print(": ");
+    //    Serial.print(sensorValue[i]);
+    //    Serial.print("    ");
+    //    Serial.print(sensorFilteredValue[i]);
+    //Serial.print("    ");
+    //Outputs the pot variation
     Serial.print(potVar[i]);
     Serial.print("    ");
 
