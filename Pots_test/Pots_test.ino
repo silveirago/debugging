@@ -21,8 +21,8 @@
 */
 
 // These constants won't change. They're used to give names to the pins used:
-const int potN = 8; // total number of pots
-const int analogInPin[potN] = {A0, A1, A2, A3, A6, A7, A8, A9}; // Analog input pin that the potentiometers are attached to
+const int potN = 1; // total number of pots
+const int analogInPin[potN] = {A0}; // Analog input pin that the potentiometers are attached to
 
 int sensorValue[potN] = {0};        // value read from the pot
 int sensorPValue[potN] = {0};        // previous val
@@ -61,7 +61,7 @@ void loop() {
     Serial.print(i);
     Serial.print(": ");
     //Serial.print(sensorValue[i]);
-    Serial.print(potVar[i]);
+    Serial.print(sensorPValue[i]);
     Serial.print("    ");
 
   }

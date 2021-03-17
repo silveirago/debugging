@@ -23,8 +23,8 @@
 */
 
 // constants won't change. They're used here to set pin numbers:
-const int buttonN = 12; // total number of buttons
-const int buttonPin[buttonN] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 14, 15}; // the number of the pushbutton pin
+const int buttonN = 2; // total number of buttons
+const int buttonPin[buttonN] = {8, 21}; // the number of the pushbutton pin
 //const int buttonPin[buttonN] = {2}; // the number of the pushbutton pin
 
 // variables will change:

@@ -1,10 +1,10 @@
 // You can choose the latch pin yourself.
-const int ShiftPWM_latchPin = 5;
+const int ShiftPWM_latchPin = 18;
 
 // ** uncomment this part to NOT use the SPI port and change the pin numbers. This is 2.5x slower **
 #define SHIFTPWM_NOSPI
-const int ShiftPWM_dataPin = 3;
-const int ShiftPWM_clockPin = 6;
+const int ShiftPWM_dataPin = 9;
+const int ShiftPWM_clockPin = 19;
 
 
 // If your LED's turn on if the pin is low, set this to true, otherwise set it to false.
@@ -18,10 +18,11 @@ const bool ShiftPWM_balanceLoad = false;
 #include <ShiftPWM.h>   // include ShiftPWM.h after setting the pins!
 // Download: https://github.com/elcojacobs/ShiftPWM
 
-unsigned char maxBrightness = 100;
+unsigned char maxBrightness = 255; // 0-255
 unsigned char pwmFrequency = 75;
-unsigned int numRegisters = 6;
-unsigned int numOutputs = numRegisters * 8;
+unsigned int numRegisters = 2;
+//unsigned int numOutputs = numRegisters * 8;
+unsigned int numOutputs = 14;
 unsigned int numRGBLeds = numRegisters * 8 / 3;
 unsigned int fadingMode = 0; //start with all LED's off.
 
@@ -60,10 +61,10 @@ void loop() {
   //    delay(100);
   //  }
 
-  for (int i = 0; i < 16 * 3; i++) {
+  for (int i = 0; i < numOutputs; i++) {
     ShiftPWM.SetAll(0);
     ShiftPWM.SetOne(i, maxBrightness);
-    delay(100);
+    delay(300);
   }
 
 }
