@@ -13,7 +13,7 @@ FASTLED_USING_NAMESPACE
 CRGB leds[NUM_LEDS];
 byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
 
-#define BRIGHTNESS          10
+#define BRIGHTNESS          255 // 0-255
 #define FRAMES_PER_SECOND  120
 
 

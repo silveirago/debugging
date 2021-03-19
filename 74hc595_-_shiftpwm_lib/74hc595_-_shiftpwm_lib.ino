@@ -20,7 +20,7 @@ const bool ShiftPWM_balanceLoad = false;
 
 unsigned char maxBrightness = 255; // 0-255
 unsigned char pwmFrequency = 75;
-unsigned int numRegisters = 2;
+unsigned int numRegisters = 2; // number of registers
 //unsigned int numOutputs = numRegisters * 8;
 unsigned int numOutputs = 14;
 unsigned int numRGBLeds = numRegisters * 8 / 3;
