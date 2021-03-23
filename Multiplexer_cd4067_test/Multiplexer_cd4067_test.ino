@@ -37,7 +37,7 @@ void readMux() {
     Serial.print(i);
     Serial.print(": ");
     //Serial.print(map(mplex.readChannel(i), 0, 1022, 0, 127));
-    Serial.print(mplex.readChannel(i));
+    Serial.print(mplex.readChannel(muxPin[i]));
     Serial.print("   ");
   }
 
