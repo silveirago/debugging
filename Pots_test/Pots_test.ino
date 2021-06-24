@@ -21,8 +21,8 @@
 */
 
 // These constants won't change. They're used to give names to the pins used:
-const int potN = 2; // total number of pots
-const int analogInPin[potN] = {A0, A1}; // Analog input pin that the potentiometers are attached to
+const int potN = 1; // total number of pots
+const int analogInPin[potN] = {A0}; // Analog input pin that the potentiometers are attached to
 
 int sensorValue[potN] = {0};        // value read from the pot
 int sensorPValue[potN] = {0};        // previous val
@@ -31,6 +31,8 @@ int potVar[potN] = {0};        // previous val
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(115200);
+
+  //pinMode(A1, INPUT_PULLUP);
 
   //  for (int i = 0; i < potN; i++) {
   //    pinMode(analogInPin[i], INPUT_PULLUP);

@@ -24,7 +24,7 @@
 
 // constants won't change. They're used here to set pin numbers:
 const int buttonN = 2; // total number of buttons
-const int buttonPin[buttonN] = {8, 21}; // the number of the pushbutton pin
+const int buttonPin[buttonN] = {16, 10}; // the number of the pushbutton pin
 //const int buttonPin[buttonN] = {2}; // the number of the pushbutton pin
 
 // variables will change:

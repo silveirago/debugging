@@ -1,15 +1,16 @@
 #include <ResponsiveAnalogRead.h> // https://github.com/dxinteractive/ResponsiveAnalogRead
 
-const byte N_POTS_ARDUINO = 2;
-const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0, A1}; //* pins of each pot connected straight to the Arduino
+const byte N_POTS_ARDUINO = 1;
+const byte POT_ARDUINO_PIN[N_POTS_ARDUINO] = {A0}; //* pins of each pot connected straight to the Arduino
 
 // make a ResponsiveAnalogRead object, pass in the pin, and either true or false depending on if you want sleep enabled
 // enabling sleep will cause values to take less time to stop changing and potentially stop changing more abruptly,
 // where as disabling sleep will cause values to ease into their correct position smoothly and more accurately
 
+float snapMultiplier = 0.01;
 ResponsiveAnalogRead responsivePot[N_POTS_ARDUINO] = {
-  ResponsiveAnalogRead(0, true, 0.01),
-  ResponsiveAnalogRead(0, true, 0.01)
+  ResponsiveAnalogRead(0, true, snapMultiplier),
+  //ResponsiveAnalogRead(0, true, snapMultiplier)
 };
 
 // the next optional argument is snapMultiplier, which is set to 0.01 by default
@@ -19,7 +20,7 @@ ResponsiveAnalogRead responsivePot[N_POTS_ARDUINO] = {
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
 }
 
@@ -29,13 +30,21 @@ void loop() {
     // update the ResponsiveAnalogRead object every loop
     int reading = analogRead(POT_ARDUINO_PIN[i]);
     responsivePot[i].update(reading);
+    Serial.print("Raw:");
+    Serial.print(reading);
+    Serial.print("  Responsive:");
+    Serial.print(responsivePot[i].getValue());
+    Serial.print("  MIDI:");
+    Serial.print(responsivePot[i].getValue() >> 3);
+    //Serial.print(map(responsivePot[i].getValue(), 0, 1023, 0, 127));
+    Serial.print("  | ");
   }
 
-  for (int i = 0; i < N_POTS_ARDUINO; i++) {
-    Serial.print(responsivePot[i].getValue());
-    //Serial.print(map(responsivePot[i].getValue(), 0, 1023, 0, 127));
-    Serial.print("  ");
-  }
+//  for (int i = 0; i < N_POTS_ARDUINO; i++) {
+//    Serial.print(responsivePot[i].getValue() >> 3);
+//    //Serial.print(map(responsivePot[i].getValue(), 0, 1023, 0, 127));
+//    Serial.print("  ");
+//  }
 
   Serial.println();
 
