@@ -4,11 +4,11 @@
 
 FASTLED_USING_NAMESPACE
 
-#define DATA_PIN    9
+#define DATA_PIN    17
 //#define CLK_PIN   4
 #define LED_TYPE    WS2812
 #define COLOR_ORDER GRB
-#define NUM_LEDS    4
+#define NUM_LEDS    53
 
 CRGB leds[NUM_LEDS];
 byte ledIndex[NUM_LEDS] = {0, 1, 2, 3};
