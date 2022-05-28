@@ -6,7 +6,7 @@ void setup() {
   // put your setup code here, to run once:
   delay(1000);
   MIDI.begin();
-  Serial.begin(115200); // use 115200 For Hairless MIDI or 31250 for physical 5-pin MIDI din
+  Serial.begin(31250); // use 115200 For Hairless MIDI or 31250 for physical 5-pin MIDI din
 }
 
 void loop() {
@@ -16,6 +16,7 @@ void loop() {
     MIDI.sendNoteOn(i, 127, 1); // note, velocity, channel
     delay(300);
     MIDI.sendNoteOn(i, 0, 1); // note, velocity, channel
+    delay(300);
   }
 
   // sends MIDI control change
