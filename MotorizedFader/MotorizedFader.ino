@@ -56,6 +56,8 @@ boolean isTouched = false;
 CapacitiveSensor   cs_7_8 = CapacitiveSensor(7, 8);       // 10M resistor between pins 7 & 8, pin 2 is sensor pin, add a wire and or foil if desired
 long touchLine;
 
+int capSenseThreshold = 700;
+
 volatile bool touched  = false; //Is the fader currently being touched?
 
 void setup() {
@@ -114,7 +116,7 @@ boolean checkTouch(long in_) {
 
   long in = in_;
 
-  if (in > 700) {
+  if (in > capSenseThreshold) {
     return true;  //700 is arbitrary and may need to be changed
   } else {
     return false;

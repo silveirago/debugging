@@ -1,10 +1,10 @@
 // You can choose the latch pin yourself.
-const int ShiftPWM_latchPin = 18;
+const int ShiftPWM_latchPin = 12;
 
 // ** uncomment this part to NOT use the SPI port and change the pin numbers. This is 2.5x slower **
 #define SHIFTPWM_NOSPI
-const int ShiftPWM_dataPin = 9;
-const int ShiftPWM_clockPin = 19;
+const int ShiftPWM_dataPin = 11;
+const int ShiftPWM_clockPin = 13;
 
 
 // If your LED's turn on if the pin is low, set this to true, otherwise set it to false.
@@ -25,6 +25,8 @@ unsigned int numRegisters = 2; // number of registers
 unsigned int numOutputs = 14;
 unsigned int numRGBLeds = numRegisters * 8 / 3;
 unsigned int fadingMode = 0; //start with all LED's off.
+
+#define SHIFTPWM_NOSPI 1
 
 byte brightness = 0;
 
