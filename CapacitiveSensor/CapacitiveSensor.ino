@@ -10,7 +10,7 @@
 
 byte capSamples = 15;
 
-CapacitiveSensor   cs_7_8 = CapacitiveSensor(7, 8);       // 10M resistor between pins 4 & 2, pin 2 is sensor pin, add a wire and or foil if desired
+CapacitiveSensor   cs_7_8 = CapacitiveSensor(16, 10);       // 10M resistor between pins 4 & 2, pin 2 is sensor pin, add a wire and or foil if desired
 
 void setup()
 {

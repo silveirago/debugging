@@ -17,12 +17,14 @@
 
 */
 
+//#include <Wire.h>
+
 #include <Adafruit_MCP23X17.h> // Include the Adafruit_MCP23X17 library
 Adafruit_MCP23X17 mcp; // Create an instance of the Adafruit_MCP23X17 class
 
 const int I2C_ADDRESS = 0x20; // MCP23017 I2C address
 
-int INT_PIN = 9;
+int INT_PIN = 8;
 byte encIndex;
 
 const int ENCODER_N = 6; // Number of encoders used
