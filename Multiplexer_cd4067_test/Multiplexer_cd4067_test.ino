@@ -1,11 +1,11 @@
 #include "Multiplexer4067.h"
 
 //* Define s0, s1, s2, s3, and x pins
-#define s0 18
-#define s1 19
-#define s2 20
-#define s3 21
-#define x1 A10 // analog pin of the first mux
+#define s0 4
+#define s1 5
+#define s2 15
+#define s3 14
+#define x1 A2 // analog pin of the first mux
 
 
 Multiplexer4067 mplex = Multiplexer4067(s0, s1, s2, s3, x1);
