@@ -1,3 +1,5 @@
+#include <MIDIUSB.h>
+
 /* Encoder Library - Basic Example
  * http://www.pjrc.com/teensy/td_libs_Encoder.html
  *
@@ -5,7 +7,6 @@
  */
 
 #include <Encoder.h>
-#include <MIDIUSB.h>
 
 // Change these two numbers to the pins connected to your encoder.
 //   Best Performance: both pins have interrupt capability
@@ -19,12 +20,12 @@ void setup() {
   Serial.println("Basic Encoder Test:");
 }
 
-long oldPosition = -999;
+int oldPosition = -999;
 
 void loop() {
-  long newPosition = myEnc.read();
-  if (newPosition != oldPosition) {
+  int newPosition = myEnc.read();
 
+  if (newPosition != oldPosition) {
 
     if (newPosition > 127) {
       newPosition = 127;
@@ -37,7 +38,8 @@ void loop() {
 
     if (newPosition != oldPosition) {
       Serial.println(newPosition);
-      controlChange(1, 1, newPosition);
+
+      controlChange(0, 1, newPosition);  // Channel 0, cc number, cc value
       MidiUSB.flush();
     }
 

@@ -17,25 +17,40 @@
 
 */
 
-#include <Adafruit_MCP23X17.h> // Include the Adafruit_MCP23X17 library
-Adafruit_MCP23X17 mcp; // Create an instance of the Adafruit_MCP23X17 class
+#include <Adafruit_MCP23X17.h>  // Include the Adafruit_MCP23X17 library
+Adafruit_MCP23X17 mcp;          // Create an instance of the Adafruit_MCP23X17 class
 
-const int I2C_ADDRESS = 0x20; // MCP23017 I2C address
+const int I2C_ADDRESS = 0x20;  // MCP23017 I2C address
 
-const int ENCODER_N = 6; // Number of encoders used
-int encoderPin[ENCODER_N][2] = {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10, 11}}; // Pin numbers for the A and B channels of each encoder
+const int ENCODER_N = 6;                                                                          // Number of encoders used
+int encoderPin[ENCODER_N][2] = { { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 }, { 8, 9 }, { 10, 11 } };  // Pin numbers for the A and B channels of each encoder
 
-int count[ENCODER_N] = {0}; // Current count of each encoder
-int lastCount[ENCODER_N] = {0}; // Previous count of each encoder
+int count[ENCODER_N] = { 0 };      // Current count of each encoder
+int lastCount[ENCODER_N] = { 0 };  // Previous count of each encoder
 
-int encoderA[ENCODER_N] = {0}; // Current state of the A channel of each encoder
-int encoderB[ENCODER_N] = {0}; // Current state of the B channel of each encoder
-int lastEncoderA[ENCODER_N] = {HIGH}; // Previous state of the A channel of each encoder
-int lastEncoderB[ENCODER_N] = {HIGH}; // Previous state of the B channel of each encoder
+int encoderA[ENCODER_N] = { 0 };         // Current state of the A channel of each encoder
+int encoderB[ENCODER_N] = { 0 };         // Current state of the B channel of each encoder
+int lastEncoderA[ENCODER_N] = { HIGH };  // Previous state of the A channel of each encoder
+int lastEncoderB[ENCODER_N] = { HIGH };  // Previous state of the B channel of each encoder
 
 void setup() {
-  //mcp.begin_I2C(I2C_ADDRESS, &Wire); // Initialize the MCP23017 chip, using the I2C_ADDRESS and &Wire
-  mcp.begin_I2C(I2C_ADDRESS, &Wire1); // Initialize the MCP23017 chip, using the I2C_ADDRESS and &Wire1
+
+  Serial.begin(9600);
+
+  while (!Serial) {
+    Serial.println("waiting...");
+  }
+  Serial.println();
+
+  // uncomment appropriate mcp.begin
+  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire)) {  // Wire1 or Wire
+    //if (!mcp.begin_SPI(CS_PIN)) {
+    Serial.println("MCP23017 Error.");
+    while (1)
+      ;
+  } else {
+    Serial.println("MCP23017 Success.");
+  }
 
   // Set the pin mode of each encoder pin to INPUT_PULLUP
   for (int i = 0; i < ENCODER_N; i++) {
@@ -44,37 +59,36 @@ void setup() {
     }
   }
 
-  Serial.begin(9600); // Start serial communication
+  Serial.begin(9600);  // Start serial communication
 }
 
 void loop() {
 
   for (int i = 0; i < ENCODER_N; i++) {
-    readEncoder(i); // Call the readEncoder function for each encoder | uses polling (slower)
+    readEncoder(i);  // Call the readEncoder function for each encoder | uses polling (slower)
   }
-
 }
 
 void readEncoder(int encIndex) {
-  int encoderA = mcp.digitalRead(encoderPin[encIndex][0]); // Read the state of the A channel of the current encoder
-  int encoderB = mcp.digitalRead(encoderPin[encIndex][1]); // Read the state of the B channel of the current encoder
+  int encoderA = mcp.digitalRead(encoderPin[encIndex][0]);  // Read the state of the A channel of the current encoder
+  int encoderB = mcp.digitalRead(encoderPin[encIndex][1]);  // Read the state of the B channel of the current encoder
 
-  if (encoderA != lastEncoderA[encIndex]) { // Check if the state of the A channel has changed
-    if (encoderA == LOW) { // If the state of the A channel is LOW
-      if (encoderB == LOW) { // If the state of the B channel is also LOW
-        count[encIndex]--; // Decrement the count for this encoder
+  if (encoderA != lastEncoderA[encIndex]) {  // Check if the state of the A channel has changed
+    if (encoderA == LOW) {                   // If the state of the A channel is LOW
+      if (encoderB == LOW) {                 // If the state of the B channel is also LOW
+        count[encIndex]--;                   // Decrement the count for this encoder
       } else {
-        count[encIndex]++; // Otherwise, increment the count for this encoder
+        count[encIndex]++;  // Otherwise, increment the count for this encoder
       }
     }
-    lastEncoderA[encIndex] = encoderA; // Update the previous state of the A channel
+    lastEncoderA[encIndex] = encoderA;  // Update the previous state of the A channel
   }
-  if (count[encIndex] != lastCount[encIndex]) { // If the count has changed
-    Serial.print("Encoder ["); // Print the encoder number
+  if (count[encIndex] != lastCount[encIndex]) {  // If the count has changed
+    Serial.print("Encoder [");                   // Print the encoder number
     Serial.print(encIndex);
     Serial.print("]: ");
-    Serial.println(count[encIndex]); // Print the current count
-    lastCount[encIndex] = count[encIndex]; // Update the previous count
+    Serial.println(count[encIndex]);        // Print the current count
+    lastCount[encIndex] = count[encIndex];  // Update the previous count
   }
 }
 

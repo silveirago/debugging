@@ -13,22 +13,23 @@ void loop() {
 
   // sends MIDI notes
   for (int i = 36; i < 48; i++) {
+    //MIDI.sendNoteOn(i, 127, 1);  // note, velocity, channel
     MIDI.sendNoteOn(i, 127, 1);  // note, velocity, channel
-    delay(300);
+    delay(1000);
+    //MIDI.sendNoteOn(i, 0, 1);  // note, velocity, channel
     MIDI.sendNoteOn(i, 0, 1);  // note, velocity, channel
-    delay(300);
+    delay(1000);
   }
 
   /*
-  // CONTROL CHANGE
-    for (int i = 1; i < 128; i++) {
-      MIDI.sendControlChange(10, 10, 10); // cc number, cc value, channel
-      delay(300);
-    }
-    */
+  //CONTROL CHANGE
+  for (int i = 1; i < 128; i++) {
+    MIDI.sendControlChange(10, i, 10);  // cc number, cc value, channel
+    delay(300);
+  }
+  */
 
   /*
-  
 // PROGRAM CHANGE
 for (int i = 0; i < 20; i++) {
 MIDI.sendProgramChange(i, 0);

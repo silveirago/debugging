@@ -49,7 +49,7 @@ void setup() {
   Serial.println();
 
   // uncomment appropriate mcp.begin
-  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire)) { // Wire1 or Wire
+  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire1)) { // Wire1 or Wire
     //if (!mcp.begin_SPI(CS_PIN)) {
     Serial.println("MCP23017 Error.");
     while (1)
@@ -78,7 +78,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(INT_PIN), readEncoder, CHANGE); // reads the encoder in the MCP23017
   mcp.clearInterrupts();  // clearInterrupts
 
-  //Serial.println("oi...");
+  
 }
 
 void loop() {
