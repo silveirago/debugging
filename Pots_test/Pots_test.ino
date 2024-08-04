@@ -1,75 +1,45 @@
 /*
-  Analog input, analog output, serial output
-
-  Reads an analog input pin, maps the result to a range from 0 to 255 and uses
-  the result to set the pulse width modulation (PWM) of an output pin.
-  Also prints the results to the Serial Monitor.
+  Reads analog input values from potentiometers and prints the results
+  to the Serial Monitor.
 
   The circuit:
-  - potentiometer connected to analog pin 0.
-    Center pin of the potentiometer goes to the analog pin.
-    side pins of the potentiometer go to +5V and ground
-  - LED connected from digital pin 9 to ground
+  - Potentiometers connected to analog pins 2 and 4.
+    Center pin of each potentiometer goes to the corresponding analog pin.
+    Side pins of the potentiometers go to +5V and ground.
 
-  created 29 Dec. 2008
-  modified 9 Apr 2012
-  by Tom Igoe
+  by Gustavo Silveira
 
   This example code is in the public domain.
-
-  http://www.arduino.cc/en/Tutorial/AnalogInOutSerial
 */
 
-// These constants won't change. They're used to give names to the pins used:
-const int potN = 2; // total number of pots
-const int analogInPin[potN] = {2, 4}; // Analog input pin that the potentiometers are attached to
+// Number of potentiometers
+const int potN = 2; // Total number of potentiometers
 
-int sensorValue[potN] = {0};        // value read from the pot
-int sensorPValue[potN] = {0};        // previous val
-int potVar[potN] = {0};        // previous val
+// Analog input pins for the potentiometers
+const int analogInPin[potN] = {2, 4}; // Analog input pins
+
+// Variables to store sensor values
+int sensorValue[potN] = {0}; // Raw value read from each potentiometer
 
 void setup() {
-  // initialize serial communications at 9600 bps:
-  Serial.begin(115200);
-
-  //pinMode(A1, INPUT_PULLUP);
-
-  //  for (int i = 0; i < potN; i++) {
-  //    pinMode(analogInPin[i], INPUT_PULLUP);
-  //  }
-
+  Serial.begin(115200); // Initialize serial communication at 115200 baud rate
 }
 
 void loop() {
-
-  // read the analog in value:
+  // Read analog input values
   for (int i = 0; i < potN; i++) {
-    //sensorValue[i] = analogRead(analogInPin[i]);
-
-    // one pole filter
-    // y[n] = A0 * x[n] + B1 * y[n-1];
-    // A = 0.15 and B = 0.85
-    int reading = analogRead(analogInPin[i]);
-    float filteredVal = 0.5 * reading + 0.5 * sensorPValue[i];
-    sensorValue[i] = filteredVal;
-
-    potVar[i] = abs(sensorValue[i] - sensorPValue[i]);
-    sensorPValue[i] = sensorValue[i];
+    sensorValue[i] = analogRead(analogInPin[i]); // Read raw analog value
   }
 
-
-  // print the results to the Serial Monitor:
+  // Print the raw values to the Serial Monitor
   for (int i = 0; i < potN; i++) {
     Serial.print(i);
     Serial.print(": ");
-    //Serial.print(sensorValue[i]);
-    Serial.print(sensorPValue[i]);
+    Serial.print(sensorValue[i]); // Print raw value
     Serial.print("    ");
-
   }
   Serial.println();
 
-  // wait 2 milliseconds before the next loop for the analog-to-digital
-  // converter to settle after the last reading:
+  // Short delay to allow the analog-to-digital converter to settle
   delay(2);
 }
