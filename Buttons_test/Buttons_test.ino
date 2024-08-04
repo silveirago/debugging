@@ -1,64 +1,42 @@
 /*
-  Button
-
-  Turns on and off a light emitting diode(LED) connected to digital pin 13,
-  when pressing a pushbutton attached to pin 2.
-
-  The circuit:
-  - LED attached from pin 13 to ground
-  - pushbutton attached to pin 2 from +5V
-  - 10K resistor attached to pin 2 from ground
-
-  - Note: on most Arduinos there is already an LED on the board
-    attached to pin 13.
-
-  created 2005
-  by DojoDave <http://www.0j0.org>
-  modified 30 Aug 2011
-  by Tom Igoe
-
-  This example code is in the public domain.
-
-  http://www.arduino.cc/en/Tutorial/Button
+Wiring Instructions:
+1. Connect one terminal of the pushbutton to digital pin 10 on the Arduino.
+2. Connect the other terminal of the pushbutton to the GND (ground) pin on the Arduino.
+3. The internal pull-up resistor will be used to keep the pin HIGH when the button is not pressed.
 */
 
-// constants won't change. They're used here to set pin numbers:
-const int buttonN = 1; // total number of buttons
-const int buttonPin[buttonN] = {10}; // the number of the pushbutton pin
-//const int buttonPin[buttonN] = {2}; // the number of the pushbutton pin
+// Constants for pin numbers and button count
+const int buttonN = 1; // Total number of buttons
+const int buttonPin[buttonN] = {10}; // Pin number for the button
 
-// variables will change:
-int buttonState[buttonN] = {0};         // variable for reading the pushbutton status
+// Variable to store button state
+int buttonState[buttonN] = {0}; // State of the button (0 = not pressed, 1 = pressed)
 
 void setup() {
-  Serial.begin(115200);
-  // initialize the LED pin as an output:
-  //pinMode(ledPin, OUTPUT);
-  // initialize the pushbutton pin as an input:
-
+  Serial.begin(115200); // Initialize serial communication at 115200 baud rate
   for (int i = 0; i < buttonN; i++) {
-    pinMode(buttonPin[i], INPUT_PULLUP);
+    pinMode(buttonPin[i], INPUT_PULLUP); // Set button pin as input with internal pull-up resistor
   }
-
 }
 
 void loop() {
-  // read the state of the pushbutton value:
-
+  // Read the state of each button and store it in buttonState array
   for (int i = 0; i < buttonN; i++) {
-    buttonState[i] = digitalRead(buttonPin[i]);
+    buttonState[i] = digitalRead(buttonPin[i]); // Read button state (HIGH if not pressed, LOW if pressed)
   }
 
+  // Print the state of each button to the Serial Monitor
   for (int i = 0; i < buttonN; i++) {
-    // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-    if (buttonState[i] == HIGH) {
+    if (buttonState[i] == HIGH) { // Button not pressed
       Serial.print(i);
       Serial.print(": OFF   ");
-    } else {
+    } else { // Button pressed
       Serial.print(i);
       Serial.print(": ON    ");
     }
   }
-  Serial.println();
-delay(10);
+  Serial.println(); // Print a newline for readability in Serial Monitor
+  delay(10); // Short delay to prevent excessive serial output
 }
+
+
