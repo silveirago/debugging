@@ -1,115 +1,206 @@
-/*
-by Gustavo Silveira | Nerd Musician
-Learn how to build your MIDI controllers: https://go.musiconerd.com/nerd-musician-pro
+#include <Adafruit_TinyUSB_MIDI.h> // https://github.com/silveirago/Adafruit_TinyUSB_MIDI
 
-This Arduino code is designed to interface with MIDI devices via USB using the
-Adafruit_TinyUSB and Arduino MIDI libraries. The code listens for various MIDI messages—such
-as Note On, Note Off, Program Change, Channel Aftertouch, and Pitch Bend—and
-provides visual feedback by blinking the onboard LED each time a message is received. 
-Additionally, it prints detailed information about each received message to the serial monitor.
-*/
+// Global instance for MIDI Input
+Adafruit_TinyUSB_MIDI_Input MIDI_Input(MIDI.getMidiInstance());
 
-
-#include <Arduino.h>
-#include <Adafruit_TinyUSB.h>
-#include <MIDI.h>
-
-// USB MIDI object
-Adafruit_USBD_MIDI usb_midi;
-
-// Create a new instance of the Arduino MIDI Library,
-// and attach usb_midi as the transport.
-MIDI_CREATE_INSTANCE(Adafruit_USBD_MIDI, usb_midi, usbMIDI);
-
-#define LED LED_BUILTIN
-int ledState = LOW;
+bool ledState = false;  // Variable to keep track of LED state
 
 void setup() {
-  pinMode(LED, OUTPUT);  // Set Arduino board pin 13 to output
+  // Start Serial communication for debugging
+  Serial.begin(115200);
 
-  usbMIDI.begin(MIDI_CHANNEL_OMNI);                      // Initialize the Midi Library.
-  usbMIDI.setHandleNoteOn(MyHandleNoteOn);               // Set function to call on NOTE ON.
-  usbMIDI.setHandleNoteOff(MyHandleNoteOff);             // Set function to call on NOTE OFF.
-  usbMIDI.setHandleProgramChange(handleProgramChange);   // Set function to call on Program Change.
-  usbMIDI.setHandleAfterTouchChannel(handleAftertouch);  // Set function to call on Channel Aftertouch.
-  usbMIDI.setHandlePitchBend(handlePitchBend);           // Set function to call on Pitch Bend.
+  // Initialize the MIDI Output
+  MIDI.begin();
 
+  // Initialize the MIDI Input callbacks
+  MIDI_Input.setHandleNoteOn(handleNoteOn);
+  MIDI_Input.setHandleNoteOff(handleNoteOff);
+  MIDI_Input.setHandleControlChange(handleControlChange);
+  MIDI_Input.setHandleProgramChange(handleProgramChange);
+  MIDI_Input.setHandlePitchBend(handlePitchBend);
+  MIDI_Input.setHandleChannelPressure(handleChannelPressure);
+  MIDI_Input.setHandleAfterTouch(handleAfterTouch);
+  MIDI_Input.setHandlePolyPressure(handlePolyPressure);
+  MIDI_Input.setHandleSysEx(handleSysEx);
+  MIDI_Input.setHandleTimeCodeQuarterFrame(handleTimeCodeQuarterFrame);
+  MIDI_Input.setHandleSongPosition(handleSongPosition);
+  MIDI_Input.setHandleSongSelect(handleSongSelect);
+  MIDI_Input.setHandleTuneRequest(handleTuneRequest);
+  MIDI_Input.setHandleRealTime(handleRealTime);
 
-  Serial.begin(115200);  // Set baud rate for MIDI communication
+  // Set LED pin as output
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);  // Ensure LED is off initially
 }
 
 void loop() {
-  usbMIDI.read();  // Continuously check if MIDI data has been received.
+  // Process incoming MIDI messages
+  MIDI_Input.read();
 }
 
-// Function to blink the LED
-void blinkLED() {
-  ledState = !ledState;
-  digitalWrite(LED, ledState);
-}
-
-// MyHandleNoteOn is the function that will be called by the Midi Library
-// when a MIDI NOTE ON message is received.
-void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
-  blinkLED();  // Blink LED when a Note On message is received
-
-  // Print information about the received Note On message
-  Serial.print("Note On received: ");
-  Serial.print("Channel: ");
+// Callback function for handling incoming Note On messages
+void handleNoteOn(uint8_t channel, uint8_t note, uint8_t velocity) {
+  Serial.print("Note On received. Channel: ");
   Serial.print(channel);
-  Serial.print(" Pitch: ");
-  Serial.print(pitch);
-  Serial.print(" Velocity: ");
+  Serial.print(", Note: ");
+  Serial.print(note);
+  Serial.print(", Velocity: ");
   Serial.println(velocity);
+
+  // Toggle LED state
+  toggleLED();
 }
 
-// MyHandleNoteOff is the function that will be called by the Midi Library
-// when a MIDI NOTE OFF message is received.
-void MyHandleNoteOff(byte channel, byte pitch, byte velocity) {
-  blinkLED();  // Blink LED when a Note Off message is received
-
-  // Print information about the received Note Off message
-  Serial.print("Note Off received: ");
-  Serial.print("Channel: ");
+// Callback function for handling incoming Note Off messages
+void handleNoteOff(uint8_t channel, uint8_t note, uint8_t velocity) {
+  Serial.print("Note Off received. Channel: ");
   Serial.print(channel);
-  Serial.print(" Pitch: ");
-  Serial.print(pitch);
-  Serial.print(" Velocity: ");
+  Serial.print(", Note: ");
+  Serial.print(note);
+  Serial.print(", Velocity: ");
   Serial.println(velocity);
+
+  // Toggle LED state
+  toggleLED();
 }
 
-// Function to handle Program Change messages
-void handleProgramChange(byte channel, byte program) {
-  blinkLED();  // Blink LED when a Program Change message is received
-
-  // Print information about the received Program Change message
-  Serial.print("Program Change received: ");
-  Serial.print("Channel: ");
+// Callback function for handling Control Change messages
+void handleControlChange(uint8_t channel, uint8_t controlNumber, uint8_t controlValue) {
+  Serial.print("Control Change received. Channel: ");
   Serial.print(channel);
-  Serial.print(" Program: ");
-  Serial.println(program);
+  Serial.print(", Control Number: ");
+  Serial.print(controlNumber);
+  Serial.print(", Control Value: ");
+  Serial.println(controlValue);
+
+  // Toggle LED state or perform any action
+  toggleLED();
 }
 
-// Function to handle Aftertouch messages
-void handleAftertouch(byte channel, byte pressure) {
-  blinkLED();  // Blink LED when an Aftertouch message is received
 
-  // Print information about the received Aftertouch message
-  Serial.print("Aftertouch received: ");
-  Serial.print("Channel: ");
+// Callback function for handling Program Change messages
+void handleProgramChange(uint8_t channel, uint8_t programNumber) {
+  Serial.print("Program Change received. Channel: ");
   Serial.print(channel);
-  Serial.print(" Pressure: ");
+  Serial.print(", Program Number: ");
+  Serial.println(programNumber);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Pitch Bend messages
+void handlePitchBend(uint8_t channel, int16_t bendValue) {
+  Serial.print("Pitch Bend received. Channel: ");
+  Serial.print(channel);
+  Serial.print(", Bend Value: ");
+  Serial.println(bendValue);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Channel Pressure (Aftertouch) messages
+void handleChannelPressure(uint8_t channel, uint8_t pressure) {
+  Serial.print("Channel Pressure received. Channel: ");
+  Serial.print(channel);
+  Serial.print(", Pressure: ");
   Serial.println(pressure);
+
+  // Toggle LED state
+  toggleLED();
 }
 
-// Function to handle Pitch Bend messages
-void handlePitchBend(byte channel, int value) {
-  blinkLED();  // Blink LED when a Pitch Bend message is received
-
-  // Print information about the received Pitch Bend message
-  Serial.print("Pitch Bend received: ");
-  Serial.print("Channel: ");
+// Callback function for handling Polyphonic Key Pressure (Poly Aftertouch) messages
+void handlePolyPressure(uint8_t channel, uint8_t note, uint8_t pressure) {
+  Serial.print("Poly Pressure received. Channel: ");
   Serial.print(channel);
-  Serial.print(" Value: ");
-  Serial.println(value);
+  Serial.print(", Note: ");
+  Serial.print(note);
+  Serial.print(", Pressure: ");
+  Serial.println(pressure);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Aftertouch messages
+void handleAfterTouch(uint8_t channel, uint8_t note, uint8_t pressure) {
+  Serial.print("Aftertouch received. Channel: ");
+  Serial.print(channel);
+  Serial.print(", Note: ");
+  Serial.print(note);
+  Serial.print(", Pressure: ");
+  Serial.println(pressure);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+
+// Callback function for handling System Exclusive (SysEx) messages
+void handleSysEx(size_t length, uint8_t *data) {
+  Serial.print("SysEx message received. Length: ");
+  Serial.println(length);
+  Serial.print("Data: ");
+  for (size_t i = 0; i < length; i++) {
+    Serial.print(data[i], HEX);
+    Serial.print(" ");
+  }
+  Serial.println();
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Time Code Quarter Frame messages
+void handleTimeCodeQuarterFrame(uint8_t typeNibble, uint8_t valuesNibble) {
+  Serial.print("Time Code Quarter Frame received. Type: ");
+  Serial.print(typeNibble);
+  Serial.print(", Value: ");
+  Serial.println(valuesNibble);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Song Position Pointer messages
+void handleSongPosition(uint16_t beats) {
+  Serial.print("Song Position received. Beats: ");
+  Serial.println(beats);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Song Select messages
+void handleSongSelect(uint8_t songNumber) {
+  Serial.print("Song Select received. Song Number: ");
+  Serial.println(songNumber);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling Tune Request messages
+void handleTuneRequest() {
+  Serial.println("Tune Request received.");
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Callback function for handling System Real-Time messages (e.g., Clock, Start, Stop)
+void handleRealTime(uint8_t realTimeType) {
+  Serial.print("Real Time message received. Type: ");
+  Serial.println(realTimeType, HEX);
+
+  // Toggle LED state
+  toggleLED();
+}
+
+// Function to toggle the built-in LED state
+void toggleLED() {
+  ledState = !ledState;                              // Toggle LED state
+  digitalWrite(LED_BUILTIN, ledState ? HIGH : LOW);  // Set LED
 }

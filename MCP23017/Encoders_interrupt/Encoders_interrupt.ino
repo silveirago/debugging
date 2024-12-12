@@ -19,44 +19,53 @@
 
 //#include <Wire.h>
 
-#include <Adafruit_MCP23X17.h> // Include the Adafruit_MCP23X17 library
-Adafruit_MCP23X17 mcp; // Create an instance of the Adafruit_MCP23X17 class
+#include <Adafruit_MCP23X17.h>  // Include the Adafruit_MCP23X17 library
+Adafruit_MCP23X17 mcp;          // Create an instance of the Adafruit_MCP23X17 class
 
-const int I2C_ADDRESS = 0x20; // MCP23017 I2C address
+const int I2C_ADDRESS = 0x20;  // MCP23017 I2C address
 
 int INT_PIN = 8;
 byte encIndex;
 
-const int ENCODER_N = 6; // Number of encoders used
+const int ENCODER_N = 6;  // Number of encoders used
 //int encoderPin[ENCODER_N][2] = {{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10, 11}}; // Pin numbers for the A and B channels of each encoder
-const int encoderPin[ENCODER_N][2] = {{8, 9}, {0, 1}, {12, 13}, {10, 11}, {2, 3}, {14, 15}}; // Pin numbers for the A and B channels of each encoder
+const int encoderPin[ENCODER_N][2] = {
+  { 8, 9 },    // Encoder 0
+  { 0, 1 },    // Encoder 1
+  { 12, 13 },  // Encoder 2
+  { 14, 15 },  // Encoder 3
+  { 10, 11 },  // Encoder 4
+  { 2, 3 }     // Encoder 5};  // Pin numbers for the A and B channels of each encoder
+};
 
-int count[ENCODER_N] = {0}; // Current count of each encoder
-int lastCount[ENCODER_N] = {0}; // Previous count of each encoder
+int count[ENCODER_N] = { 0 };      // Current count of each encoder
+int lastCount[ENCODER_N] = { 0 };  // Previous count of each encoder
 
-int encoderA[ENCODER_N] = {0}; // Current state of the A channel of each encoder
-int encoderB[ENCODER_N] = {0}; // Current state of the B channel of each encoder
-int lastEncoderA[ENCODER_N] = {HIGH}; // Previous state of the A channel of each encoder
-int lastEncoderB[ENCODER_N] = {HIGH}; // Previous state of the B channel of each encoder
+int encoderA[ENCODER_N] = { 0 };         // Current state of the A channel of each encoder
+int encoderB[ENCODER_N] = { 0 };         // Current state of the B channel of each encoder
+int lastEncoderA[ENCODER_N] = { HIGH };  // Previous state of the A channel of each encoder
+int lastEncoderB[ENCODER_N] = { HIGH };  // Previous state of the B channel of each encoder
 
 void setup() {
-  
+
   Serial.begin(9600);
 
   while (!Serial) {
-    Serial.println("waiting...");
+    //Serial.println("waiting...");
   }
   Serial.println();
 
-  // uncomment appropriate mcp.begin
-  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire1)) { // Wire1 or Wire
+  // // uncomment appropriate mcp.begin
+  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire1)) {  // Wire1 or Wire
     //if (!mcp.begin_SPI(CS_PIN)) {
     Serial.println("MCP23017 Error.");
-    while (1)
-      ;
+    //while (1)
+    ;
   } else {
     Serial.println("MCP23017 Success.");
   }
+
+  //mcp.begin_I2C(I2C_ADDRESS, &Wire1);
 
   // configure MCU pin that will read INTA/B state
   pinMode(INT_PIN, INPUT_PULLUP);
@@ -72,18 +81,14 @@ void setup() {
   // mirror INTA/B so only one wire required
   // active drive so INTA/B will not be floating
   // INTA/B will be signaled with a LOW
-  mcp.setupInterrupts(true, false, CHANGE);
+  mcp.setupInterrupts(true, true, CHANGE);
 
-  //attachInterrupt(digitalPinToInterrupt(INT_PIN), getLastInterrupt, CHANGE); // gets the MCP23017 pin that was "interrupted"
-  attachInterrupt(digitalPinToInterrupt(INT_PIN), readEncoder, CHANGE); // reads the encoder in the MCP23017
+  attachInterrupt(digitalPinToInterrupt(INT_PIN), getLastInterrupt, CHANGE);  // gets the MCP23017 pin that was "interrupted"
+  //attachInterrupt(digitalPinToInterrupt(INT_PIN), readEncoder, CHANGE); // reads the encoder in the MCP23017
   mcp.clearInterrupts();  // clearInterrupts
-
-  
 }
 
 void loop() {
-
-
 }
 
 void readEncoder() {
@@ -101,34 +106,31 @@ void readEncoder() {
     //    Serial.print("encIndex: ");
     //    Serial.println(encIndex);
 
-    int encoderA = mcp.digitalRead(encoderPin[encIndex][0]); // Read the state of the A channel of the current encoder
-    int encoderB = mcp.digitalRead(encoderPin[encIndex][1]); // Read the state of the B channel of the current encoder
+    int encoderA = mcp.digitalRead(encoderPin[encIndex][0]);  // Read the state of the A channel of the current encoder
+    int encoderB = mcp.digitalRead(encoderPin[encIndex][1]);  // Read the state of the B channel of the current encoder
 
-    if (encoderA != lastEncoderA[encIndex]) { // Check if the state of the A channel has changed
-      if (encoderA == LOW) { // If the state of the A channel is LOW
-        if (encoderB == LOW) { // If the state of the B channel is also LOW
-          count[encIndex]--; // Decrement the count for this encoder
+    if (encoderA != lastEncoderA[encIndex]) {  // Check if the state of the A channel has changed
+      if (encoderA == LOW) {                   // If the state of the A channel is LOW
+        if (encoderB == LOW) {                 // If the state of the B channel is also LOW
+          count[encIndex]--;                   // Decrement the count for this encoder
         } else {
-          count[encIndex]++; // Otherwise, increment the count for this encoder
+          count[encIndex]++;  // Otherwise, increment the count for this encoder
         }
       }
-      lastEncoderA[encIndex] = encoderA; // Update the previous state of the A channel
+      lastEncoderA[encIndex] = encoderA;  // Update the previous state of the A channel
     }
 
-    if (count[encIndex] != lastCount[encIndex]) { // If the count has changed
-      Serial.print("Encoder ["); // Print the encoder number
+    if (count[encIndex] != lastCount[encIndex]) {  // If the count has changed
+      Serial.print("Encoder [");                   // Print the encoder number
       Serial.print(encIndex);
       Serial.print("]: ");
-      Serial.println(count[encIndex]); // Print the current count
-      lastCount[encIndex] = count[encIndex]; // Update the previous count
+      Serial.println(count[encIndex]);        // Print the current count
+      lastCount[encIndex] = count[encIndex];  // Update the previous count
     }
-
-
   }
 
 
   mcp.clearInterrupts();  // clear
-
 }
 
 
@@ -155,18 +157,17 @@ void getLastInterrupt() {
   if (interruptPin >= 0 && interruptPin < 16) {
 
     Serial.println(interruptPin);
-    //Serial.println(Serial.print(interruptPin));
+    Serial.println(Serial.print(interruptPin));
 
-    //  Serial.print("Interrupt detected on pin: ");
-    //  Serial.println(interruptPin);
-    //  Serial.print("Pin states at time of interrupt: 0b");
-    //  Serial.println(mcp.getCapturedInterrupt(), 2);
+    Serial.print("Interrupt detected on pin: ");
+    Serial.println(interruptPin);
+    Serial.print("Pin states at time of interrupt: 0b");
+    Serial.println(mcp.getCapturedInterrupt(), 2);
     delay(25);  // debounce
 
     // NOTE: If using DEFVAL, INT clears only if interrupt
     // condition does not exist.
     // See Fig 1-7 in datasheet.
-
   }
   mcp.clearInterrupts();  // clear
 }

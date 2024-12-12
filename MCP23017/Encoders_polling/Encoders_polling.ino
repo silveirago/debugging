@@ -22,8 +22,8 @@ Adafruit_MCP23X17 mcp;          // Create an instance of the Adafruit_MCP23X17 c
 
 const int I2C_ADDRESS = 0x20;  // MCP23017 I2C address
 
-const int ENCODER_N = 6;                                                                          // Number of encoders used
-int encoderPin[ENCODER_N][2] = { { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 }, { 8, 9 }, { 10, 11 } };  // Pin numbers for the A and B channels of each encoder
+const int ENCODER_N = 6;                                                                              // Number of encoders used
+int encoderPin[ENCODER_N][2] = { { 8, 9 }, { 0, 1 }, { 12, 13 }, { 14, 15 }, { 10, 11 }, { 2, 3 } };  // Pin numbers for the A and B channels of each encoder
 
 int count[ENCODER_N] = { 0 };      // Current count of each encoder
 int lastCount[ENCODER_N] = { 0 };  // Previous count of each encoder
@@ -43,14 +43,16 @@ void setup() {
   Serial.println();
 
   // uncomment appropriate mcp.begin
-  if (!mcp.begin_I2C(I2C_ADDRESS, &Wire)) {  // Wire1 or Wire
-    //if (!mcp.begin_SPI(CS_PIN)) {
-    Serial.println("MCP23017 Error.");
-    while (1)
-      ;
-  } else {
-    Serial.println("MCP23017 Success.");
-  }
+  // if (!mcp.begin_I2C(I2C_ADDRESS, &Wire)) {  // Wire1 or Wire
+  //   //if (!mcp.begin_SPI(CS_PIN)) {
+  //   Serial.println("MCP23017 Error.");
+  //   while (1)
+  //     ;
+  // } else {
+  //   Serial.println("MCP23017 Success.");
+  // }
+
+  mcp.begin_I2C(I2C_ADDRESS, &Wire1);
 
   // Set the pin mode of each encoder pin to INPUT_PULLUP
   for (int i = 0; i < ENCODER_N; i++) {
