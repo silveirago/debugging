@@ -11,7 +11,7 @@
 //   Best Performance: both pins have interrupt capability
 //   Good Performance: only the first pin has interrupt capability
 //   Low Performance:  neither pin has interrupt capability
-Encoder myEnc(3, 2);
+Encoder myEnc(9,8);
 //   avoid using pins with LEDs attached
 
 void setup() {

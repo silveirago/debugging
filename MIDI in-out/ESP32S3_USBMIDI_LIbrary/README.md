@@ -2,6 +2,7 @@
 
 This repository contains the code and instructions for setting up an ESP32-S3 as a MIDI controller. Follow the steps below to get started.
 
+
 ## Getting Started
 
 ### Step 1: Install the ESP32 Boards in Arduino IDE
@@ -57,6 +58,36 @@ Before uploading the code, follow these steps to put your ESP32-S3 in bootloader
 ## Notes
 - Ensure your ESP32-S3 has the appropriate power supply through the USB connection.
 - Use the debug prints in the code (enabled with `#define DEBUG_PRINTS 1`) to troubleshoot any issues.
+
+---
+
+## ESP32-S3 Pin Usage Guidelines
+
+When building a MIDI controller (or any project) with the ESP32-S3, it’s important to **avoid certain pins** that are reserved or have special functions. Using these pins for general I/O can cause boot errors, prevent USB operation, or break flash/PSRAM access.
+
+1. **Strapping Pins**  
+   - **GPIO0**, **GPIO45**, **GPIO46**  
+   - These are used to determine boot modes and power configurations. Best practice: do not connect them to external circuits or use them as general inputs/outputs.
+
+2. **Flash/PSRAM Pins**  
+   - **GPIO26** through **GPIO32**  
+   - Typically connected to the on-board SPI flash memory or PSRAM. Avoid reassigning them or connecting external components here unless you have a specialized design.
+
+3. **USB Pins**  
+   - **GPIO19** (USB_D–), **GPIO20** (USB_D+)  
+   - If you plan to use the ESP32-S3’s built-in USB features (which is common for MIDI over USB), leave these pins dedicated to USB.
+
+4. **JTAG Pins (optional caution)**  
+   - **GPIO39**–**GPIO42**  
+   - Used for hardware JTAG debugging. If you need JTAG, keep these pins free; otherwise, you can use them, but it’s best practice to leave them unused if you’ll want debugging later.
+
+5. **Recommended “Safe” GPIOs**  
+   - Most other pins on the ESP32-S3 are generally safe to use for buttons, encoders, displays, and MIDI (e.g., GPIO1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 21, 22, 23, 38, etc.).
+   - Check if your specific ESP32-S3 board has onboard peripherals (LEDs, sensors) on certain pins. Adjust accordingly.
+
+By respecting these guidelines, you’ll avoid hardware conflicts and ensure a stable boot process and reliable USB-based MIDI.
+
+---
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.

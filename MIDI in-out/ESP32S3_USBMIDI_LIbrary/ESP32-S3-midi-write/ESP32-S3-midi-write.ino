@@ -2,7 +2,7 @@
 #include "USBMIDI.h"
 
 // Enable or disable debug prints
-#define DEBUG_PRINTS 1
+//#define DEBUG_PRINTS 1
 
 // Instantiate the USB MIDI class
 USBMIDI usbMidi;
