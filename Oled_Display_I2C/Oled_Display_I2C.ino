@@ -7,7 +7,7 @@ Adafruit_SSD1306 display(128, 64);  // Create display
 //#include <Fonts/FreeMonoBold12pt7b.h>  // Add a custom font
 //#include <Fonts/FreeMono9pt7b.h>  // Add a custom font
 
-byte midiCh = 1;
+byte midiCh = 127;
 
 void setup() {
 
@@ -27,7 +27,7 @@ void setup() {
   display.dim(0);  //Set brightness (0 is maximun and 1 is a little dim)
 
   display.clearDisplay();  // Clear the display so we can refresh
-  display.setTextSize(4);
+  display.setTextSize(5);
   //  display.setFont(&FreeMonoBold12pt7b);  // Set a custom font
   //display.setFont(&FreeMono9pt7b);  // Set a custom font
   //display.setFont(&FreeSansBoldOblique9pt7b);  // Set a custom font

@@ -16,12 +16,16 @@
 const int potN = 2; // Total number of potentiometers
 
 // Analog input pins for the potentiometers
-const int analogInPin[potN] = {2, 4}; // Analog input pins
+const int analogInPin[potN] = {A0, A1}; // Analog input pins
 
 // Variables to store sensor values
 int sensorValue[potN] = {0}; // Raw value read from each potentiometer
 
 void setup() {
+
+  for (int i = 0; i < potN; i++) {
+    pinMode(analogInPin[i], INPUT_PULLUP);
+  }
   Serial.begin(115200); // Initialize serial communication at 115200 baud rate
 }
 
